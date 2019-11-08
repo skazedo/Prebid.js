@@ -1,0 +1,52 @@
+<!-- This page calls a single bidder for a single ad slot. It can be considered a "hello world" example for using Prebid with the Google Publisher Tag. It also makes a good test page for new adapter PR submissions. Simply set your server's Bid Params object in the bids array inside the adUnits, and it will use your adapter to load an ad. NOTE that many ad servers won't send back an ad if the URL is localhost... so you might need to set an alias in your /etc/hosts file so that you can load this page from a different domain.-->
+<html>
+<head> <script> var PREBID_TIMEOUT = 3000;
+ var adUnits = [{ code: 'div-gpt-ad-1460505748561-0', mediaTypes: { video: { context: 'instream', playerSize: [640, 480] }, }, // Replace this object to test a new Adapter!
+  bids: [{ bidder: 'zedo',
+    params: { channelCode: 2264004517, //REQUIRED 
+       dimId: 85 
+    } }] }, { code: 'div-gpt-ad-1460505748561-1', mediaTypes: { banner: { sizes: [[300, 250], [300, 600]], }, }, // Replace this object to test a new Adapter! 
+    bids: [{ bidder: 'zedo', params: { channelCode: 2264004517, //REQUIRED 
+        dimId:9 } }] }];
+ var pbjs = pbjs || {}; pbjs.que = pbjs.que || [];
+ </script>
+ <script type="text/javascript" src="../../build/dev/prebid.js" async></script> <script> var googletag = googletag || {}; googletag.cmd = googletag.cmd || []; googletag.cmd.push(function () { googletag.pubads().disableInitialLoad(); });
+ pbjs.que.push(function () { pbjs.addAdUnits(adUnits); 
+    pbjs.setConfig({ 
+    cache: { 
+        url: 'https://prebid.adnxs.com/pbc/v1/cache' 
+    },
+    schain: {
+        validation: "strict",
+        config: {
+        ver:"1.0",
+        complete: 1,
+        nodes: [
+            {   
+            asi:"indirectseller.com",
+            sid:"00001",
+            hp:1
+            }
+        ]
+        }
+    } 
+});
+ pbjs.requestBids({ bidsBackHandler: sendAdserverRequest }); });
+ function sendAdserverRequest() { 
+     if (pbjs.adserverRequestSent) return; 
+     pbjs.adserverRequestSent = true; 
+     let pSlotId = 'div-gpt-ad-1460505748561-0'; 
+     let bidResponse = pbjs.getAdserverTargetingForAdUnitCode(pSlotId); //console.log(" Dumping all bid objects to console:"); //pbjs.getBidResponses(pSlotId); // this will print the object internally 
+     console.log(" Prebid Response with : "); 
+     console.log(bidResponse);
+     pSlotId = 'div-gpt-ad-1460505748561-1'; 
+     bidResponse = pbjs.getAdserverTargetingForAdUnitCode(pSlotId); //console.log(" Dumping all bid objects to console:"); // pbjs.getBidResponses(pSlotId); // this will print the object internally 
+    console.log(" Prebid Response with : "); console.log(bidResponse); 
+}
+ setTimeout(function () { sendAdserverRequest(); }, PREBID_TIMEOUT);
+ </script>
+
+</head>
+<body> <h2>Prebid.js Test</h2> <h5>Div-1</h5> <div id='div-gpt-ad-1460505748561-0'>
+ </div> <div id='div-gpt-ad-1460505748561-1'> </div></body>
+</html>
